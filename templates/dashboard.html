@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="text-2xl md:text-3xl font-semibold text-[var(--accent)] mb-2">
+  Welcome to ToolsParadise
+</h2>
+<p class="text-gray-400 mb-8 max-w-xl">
+  A collection of small, powerful tools to solve everyday problems.
+</p>
+
+{% macro tool(href, icon, title, desc, color) %}
+<a href="{{ href }}" class="tool-card rounded-xl p-5 block select-none">
+  <div class="flex items-center gap-3 mb-2">
+    <i data-lucide="{{ icon }}" class="w-6 h-6 {{ color }}"></i>
+    <h4 class="font-medium">{{ title }}</h4>
+  </div>
+  <p class="text-sm text-gray-400">{{ desc }}</p>
+</a>
+{% endmacro %}
+
+{% macro section(id, title) %}
+<h3 id="{{ id }}"
+    class="text-lg font-semibold text-gray-300 mt-10 mb-3 flex items-center gap-2">
+  {{ title }}
+</h3>
+<div class="grid gap-5"
+     style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+  {{ caller() }}
+</div>
+{% endmacro %}
+
+
+{% call section("security", "🔐 Admin / Admin (Security & Auth)") %}
+  {{ tool("/password-generator","key","Password Generator","Generate strong secure passwords","text-cyan-400") }}
+  {{ tool("#","lock","Password Strength Checker","Check password strength instantly","text-yellow-400") }}
+  {{ tool("#","shield","Password Manager","Manage passwords securely","text-green-400") }}
+  {{ tool("#","hash","Hash Generator","Generate hashes for strings","text-purple-400") }}
+{% endcall %}
+
+{% call section("converters", "🔄 Universal Translator (Converters)") %}
+  {{ tool("#","ruler","Unit Converter","Convert measurement units","text-orange-400") }}
+  {{ tool("#","refresh-cw","Currency Converter","Convert currencies","text-teal-400") }}
+  {{ tool("#","clock","Time Zone Converter","Convert time zones","text-blue-400") }}
+  {{ tool("#","database","Digital Size Converter","KB, MB, GB conversions","text-pink-400") }}
+{% endcall %}
+
+{% call section("dev", "🧪 It Works on My Machine (Developer Utilities)") %}
+  {{ tool("#","braces","JSON Formatter","Format and validate JSON","text-green-400") }}
+  {{ tool("#","binary","Base64 Encoder/Decoder","Encode & decode Base64","text-cyan-400") }}
+  {{ tool("#","file-text","SQL Formatter","Format SQL queries","text-purple-400") }}
+  {{ tool("#","key-round","JWT Debugger","Decode and inspect JWTs","text-yellow-400") }}
+{% endcall %}
+
+{% call section("finance", "💸 What Am I Broke (Finance)") %}
+  {{ tool("#","wallet","Expense Tracker","Track daily expenses","text-emerald-400") }}
+  {{ tool("#","calculator","EMI Calculator","Loan & EMI calculator","text-orange-400") }}
+  {{ tool("#","trending-up","SIP Calculator","Investment return calculator","text-teal-400") }}
+  {{ tool("#","repeat","Subscription Manager","Track recurring payments","text-pink-400") }}
+{% endcall %}
+
+{% call section("design", "🎨 Pixel Perfect (Design & Images)") %}
+  {{ tool("#","qr-code","QR Code Generator","Generate QR codes","text-pink-400") }}
+  {{ tool("#","pipette","Color Picker","Pick & copy colors","text-purple-400") }}
+  {{ tool("#","image","Image Converter","Convert image formats","text-blue-400") }}
+{% endcall %}
+
+{% call section("text", "✍️ The Clipboard Warrior (Text Tools)") %}
+  {{ tool("#","type","Case Converter","Change text casing","text-cyan-400") }}
+  {{ tool("#","eraser","Text Cleaner","Remove unwanted chars","text-yellow-400") }}
+  {{ tool("#","diff","Diff Checker","Compare text differences","text-red-400") }}
+  {{ tool("#","file","Lorem Ipsum Generator","Generate placeholder text","text-green-400") }}
+{% endcall %}
+
+{% call section("network", "🌐 Is It Me or the Internet") %}
+  {{ tool("#","wifi","My IP Address","Check your public IP","text-teal-400") }}
+  {{ tool("#","activity","Internet Speed Test","Test network speed","text-orange-400") }}
+  {{ tool("#","monitor","Device Info","View screen & device info","text-blue-400") }}
+{% endcall %}
+
+{% call section("random", "🧠 Just Because") %}
+  {{ tool("#","shuffle","Random Generator","Generate random values","text-pink-400") }}
+  {{ tool("#","clock","Countdown Timer","Simple countdown timer","text-yellow-400") }}
+{% endcall %}
+
+{% endblock %}

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToolsParadise</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; }
+
+    :root {
+        --bg-main: #0b0f1a;
+        --bg-sidebar: #0b1220;
+
+        --card-bg: #0f172a;
+        --input-bg: #020617;
+
+        --border-soft: #1f2937;
+
+        --accent: #4fd1c5;
+        --accent-soft: #2dd4bf33;
+    }
+
+    .tool-card {
+        background: linear-gradient(
+            180deg,
+            rgba(255,255,255,0.05),
+            rgba(255,255,255,0.02)
+        );
+        border: 1px solid var(--border-soft);
+        transition: all 0.25s ease;
+        cursor: pointer;
+    }
+
+    .tool-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(94,224,224,0.18);
+        border-color: rgba(94,224,224,0.45);
+    }
+
+    .sidebar-link:hover {
+        background: rgba(94,224,224,0.08);
+    }
+
+    .sidebar-link.active {
+        background: rgba(94, 224, 224, 0.18);
+        color: var(--accent);
+        font-weight: 500;
+    }
+
+  </style>
+</head>
+
+<body class="bg-[var(--bg-main)] text-gray-200">
+<div class="flex h-screen">
+
+  <!-- Overlay -->
+  <div id="overlay"
+       onclick="toggleSidebar()"
+       class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden">
+  </div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="fixed lg:static z-40 w-64 h-full
+           bg-[var(--bg-sidebar)]
+           border-r border-[#141b2e]
+           p-4
+           transform -translate-x-full lg:translate-x-0
+           transition-transform">
+
+    <h1 class="text-lg font-semibold text-[var(--accent)] mb-6">
+      ToolsParadise
+    </h1>
+
+    <a href="/" class="sidebar-link block px-3 py-2 rounded-md text-sm">
+      Home
+    </a>
+
+    <p class="mt-6 mb-2 text-xs uppercase text-gray-500">
+    Categories
+    </p>
+
+    {% for category in categories %}
+    <a href="javascript:void(0)"
+        data-section="{{ category.id }}"
+        class="sidebar-link category-link block px-3 py-2 text-sm">
+        {{ category.title.split('(')[0].strip() }}
+    </a>
+    {% endfor %}
+
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col">
+    <header class="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-[#141b2e]">
+      <button onclick="toggleSidebar()">
+        <i data-lucide="menu"></i>
+      </button>
+      <span class="text-[var(--accent)] font-medium">ToolsParadise</span>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 py-6">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+<script>
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const main = document.querySelector("main");
+
+  function toggleSidebar() {
+    sidebar.classList.toggle("-translate-x-full");
+    overlay.classList.toggle("hidden");
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const categoryLinks = [...document.querySelectorAll(".category-link")];
+    const sections = categoryLinks
+      .map(link => document.getElementById(link.dataset.section))
+      .filter(Boolean);
+
+    let activeSectionId = null;
+
+    categoryLinks.forEach(link => {
+        link.addEventListener("click", () => {
+            const section = document.getElementById(link.dataset.section);
+            if (!section) return;
+
+            const mainRect = main.getBoundingClientRect();
+            const sectionRect = section.getBoundingClientRect();
+
+            const offset =
+            sectionRect.top -
+            mainRect.top -
+            main.clientHeight / 3;
+
+            main.scrollTo({
+            top: main.scrollTop + offset,
+            behavior: "smooth"
+            });
+
+            if (window.innerWidth < 1024) {
+            sidebar.classList.add("-translate-x-full");
+            overlay.classList.add("hidden");
+            }
+        });
+    });
+    function updateActiveCategory() {
+    const mainRect = main.getBoundingClientRect();
+
+    if (main.scrollTop < 80) {
+        setActive(sections[0].id);
+        return;
+    }
+
+    const zoneTop = mainRect.top + main.clientHeight * 0.35;
+    const zoneBottom = mainRect.top + main.clientHeight * 0.65;
+
+    for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < zoneBottom && rect.bottom > zoneTop) {
+        setActive(section.id);
+        return;
+        }
+    }
+    }
+
+    function setActive(id) {
+    if (id === activeSectionId) return;
+
+    activeSectionId = id;
+    categoryLinks.forEach(link => {
+        link.classList.toggle(
+        "active",
+        link.dataset.section === activeSectionId
+        );
+    });
+    }
+    main.addEventListener("scroll", updateActiveCategory, { passive: true });
+    updateActiveCategory();
+
+    lucide.createIcons();
+  });
+</script>
+</body>
+</html>
